@@ -24,10 +24,20 @@
            <constructor-arg name="name" value="第三种通过name来创建"/>
          </bean>
 
-        <bean id="user2" class="com.kuang.pojo.User1">
 
-            
+
+<!--    id bean的唯一标识符-->
+<!--    class：bean所对应的全限定名-->
+<!--    name也是别名 name可以取多个别名-->
+
+        <bean id="user2" class="com.kuang.pojo.User1" name="userT u2">
+            <property name="name" value="Usser2 的name"/>
         </bean>
 
+<!--    如果添加了别名，可以通过别名获取对象  r-->
+     <alias name="user" alias="newUser"/>
+
+    
+    
 
 </beans>
