@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<!--    有参构造创建
+1。通过下标来创建-->
+<!--         <bean id="user" class="com.kuang.pojo.User">-->
+<!--            <constructor-arg index="0" value="asdasdasda"/>-->
+<!--         </bean>-->
+
+<!--2。通过参数类型来构造
+ 不建议使用
+ 如果参数有相同类型，此方法不行
+ -->
+<!--      <bean id="user" class="com.kuang.pojo.User">-->
+<!--          <constructor-arg type="java.lang.String" value="chuangjain"/>-->
+<!--      </bean>-->
+    
+<!--3。 第三种通过name（参数名称）来创建-->
+         <bean id="user" class="com.kuang.pojo.User">
+           <constructor-arg name="name" value="第三种通过name来创建"/>
+         </bean>
+
+        <bean id="user2" class="com.kuang.pojo.User1">
+
+            
+        </bean>
+
+
+</beans>
