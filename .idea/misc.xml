@@ -10,6 +10,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/spring01-study-ioc/pom.xml" />
+        <option value="$PROJECT_DIR$/spring07appconfig1/pom.xml" />
       </set>
     </option>
   </component>

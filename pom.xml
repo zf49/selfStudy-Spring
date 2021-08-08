@@ -14,6 +14,9 @@
         <module>spring03-ioc2</module>
         <module>spring04-di</module>
         <module>spring05-Autowired</module>
+        <module>spring06-annotation</module>
+        <module>spring07appconfig1</module>
+        <module>spring07-appconfig</module>
     </modules>
 
 
