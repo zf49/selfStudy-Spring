@@ -56,7 +56,9 @@ public class User {
 
   这四个注解功能都是一样的, 都是代表某个类注册到Spring中，装配Bean!!!
 
-4. 自动装配
+4. ## 自动装配
+
+   
 
    ```xml
    - @Autowired: 自动装配通过类型，名字
@@ -180,4 +182,66 @@ public class Mytest {
 
 }
 ```
+
+## 10. 代理模式
+
+springAOP的底层就是代理模式
+
+代理模式的分类
+
+- 静态代理
+- 动态代理
+
+![image-20210809195957970](/Users/chris/JAVA/Self-study/spring-study/img/WX20210809-195908@2x.png)
+
+
+
+### 静态代理
+
+角色分析：
+
+- 抽象角色：一把是同借口或者抽象类
+- 真是角色： 被代理的角色
+- 代理角色： 代理真实角色，代理真实角色后，我们一般会做一些附加操作
+- 客户：访问代理对象的人
+
+代码步骤
+
+1. 接口
+2. 真实角色
+3. 代理角色
+4. 客户端访问
+
+代理模式的好处
+
+- 可以是真实角色的操作更加存粹，不用关注一些公共服务
+- 公共服务交给代理角色！实现了业务的分工
+- 公共服务发生拓展是，方便集中管理
+
+缺点
+
+- 一个真实角色就会禅师一个代理角色，代码量会翻倍，开发效率会变低
+
+![image-20210809201354152](/Users/chris/Library/Application Support/typora-user-images/image-20210809201354152.png)
+
+![image-20210809201415614](/Users/chris/Library/Application Support/typora-user-images/image-20210809201415614.png)
+
+![image-20210809201424148](/Users/chris/Library/Application Support/typora-user-images/image-20210809201424148.png)
+
+![image-20210809201433960](/Users/chris/Library/Application Support/typora-user-images/image-20210809201433960.png)
+
+### 动态代理
+
+- 动态代理和静态代理角色一样
+- 动态代理的类是动态生成的，不是我们直接写好的
+- 动态分类分为两大类：基于接口的
+  - 基于接口的：jdk动态代理
+  - 基于类的：c g li b
+  - java字节码实现：javasist
+
+需要了解两个类：Proxy，invocationHandler
+
+## invocationHandler
+
+![image-20210809213904249](/Users/chris/Library/Application Support/typora-user-images/image-20210809213904249.png)
 
