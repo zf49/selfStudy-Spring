@@ -9,8 +9,7 @@ import java.lang.reflect.Proxy;
 
 //我们会用户这个类来生成代理类
 public class ProxyInvocationHandler implements InvocationHandler {
-
-
+    
     private Object target;
 
     public void setTarget(Object target) {

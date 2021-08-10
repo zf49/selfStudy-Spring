@@ -245,3 +245,421 @@ springAOP的底层就是代理模式
 
 ![image-20210809213904249](/Users/chris/Library/Application Support/typora-user-images/image-20210809213904249.png)
 
+----
+
+## AOP
+
+![image-20210810171008181](/Users/chris/Library/Application Support/typora-user-images/image-20210810171008181.png)
+
+![image-20210810171027573](/Users/chris/Library/Application Support/typora-user-images/image-20210810171027573.png)
+
+![image-20210810171217070](/Users/chris/Library/Application Support/typora-user-images/image-20210810171217070.png)
+
+![image-20210810171234955](/Users/chris/Library/Application Support/typora-user-images/image-20210810171234955.png)
+
+## Spring 实现AOP-(moudle09)
+
+倒包
+
+```xml
+<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.8.M1</version>
+    <scope>runtime</scope>
+</dependency>
+
+```
+
+1. 使用spring接口
+
+```xml
+<!--注册bean    z-->
+     <bean id="userService" class="com.kuang.service.UserServiceImpl"/>
+     <bean id="log" class="com.kuang.log.Log"/>
+     <bean id="afterLog" class="com.kuang.log.AfterLog"/>
+
+
+<!-- 方式一 使用原生aoi接口 -->
+<!--    配置AOP 倒入aop约束-->
+     <aop:config>
+<!--         找到切入点
+
+expression: 表达式
+execution(要是行的位置* * * * *)
+-->
+      <aop:pointcut id="pointcut" expression="execution(* com.kuang.service.UserServiceImpl.*(..))"/>
+<!--执行环绕 增强-->
+
+         <aop:advisor advice-ref="log" pointcut-ref="pointcut"/>
+         <aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>
+        </aop:config>
+
+```
+
+方法2： 使用自定义类来实现
+
+主要定义切面
+
+```xml
+<!--方式二      f-->
+
+    <bean id="diy" class="com.kuang.diy.PointCut"/>
+     <aop:config>
+<!--         自定义切面  ref引用的类即上面的bean  -->
+         <aop:aspect ref="diy">
+<!--                切入点-->
+               <aop:pointcut id="pointcut" expression="execution(* com.kuang.service.UserServiceImpl.*(..))"/>
+<!--             通知advice-->
+             <aop:before method="before" pointcut-ref="pointcut"/>
+             <aop:after method="after" pointcut-ref="pointcut"/>
+         </aop:aspect>
+
+     </aop:config>
+
+```
+
+方法3: 使用注解实现
+
+```xml
+<!--    方式3-->
+  <bean id="annotationPointCut" class="com.kuang.diy.AnnotationPointCut"/>
+<!--开启注解支持   k-->
+    
+     <aop:aspectj-autoproxy/>
+    
+```
+
+```java
+package com.kuang.diy;
+
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+//使用注解来实现
+@Aspect  //标注这是一个切面
+public class AnnotationPointCut {
+
+    @Before("execution(* com.kuang.service.UserServiceImpl.*(..))")
+    public void before(){
+        System.out.println("方法执行前");
+    }
+
+     @After("execution(* com.kuang.service.UserServiceImpl.*(..))")
+    public void after(){
+        System.out.println("方法执行hou");
+    }
+
+     @Around("execution(* com.kuang.service.UserServiceImpl.*(..))")
+     //环绕中，我们需要给定一个参数，代表我们要获取处理切入的点
+    public void around(ProceedingJoinPoint jp) throws Throwable {
+        System.out.println("环绕前");
+         System.out.println(jp.getSignature());
+         Object proceed = jp.proceed();
+         System.out.println("环绕后");
+
+     }
+
+
+}
+```
+
+```xml
+
+环绕前
+void com.kuang.service.UserService.add()
+方法执行前
+add用户
+方法执行hou
+环绕后
+
+```
+
+## 整合Mybatis
+
+步骤
+
+1. 倒入jar包
+
+   - junit
+
+   - mybatis
+   - mysql
+   - Spring
+   - aop织入
+   - mybatis-spring
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.46</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>5.3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.8.M1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>2.0.6</version>
+        </dependency>
+        
+    </dependencies>
+```
+
+
+
+2. 编写配置文件
+
+3. 测试
+
+### 回忆Mybatis
+
+1. 编写实体类
+
+2. 编写核心配置文件
+
+   ```xm
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE mapper
+           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="xxxx">
+   
+   
+   
+       
+   </mapper>
+   ```
+
+   ```xml
+   
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE configuration
+           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-config.dtd">
+   <configuration>
+   
+        <properties resource="db.properties"/>
+       <typeAliases>
+          <package name="com.kuang.pojo"/> 
+       </typeAliases>
+   
+       <environments default="development">
+           <environment id="development">
+               <transactionManager type="JDBC"/>
+               <dataSource type="POOLED">
+                   <property name="driver" value="${driver}"/>
+                   <property name="url" value="${url}"/>
+                   <property name="username" value="${username}"/>
+                   <property name="password" value="${password}"/>
+               </dataSource>
+           </environment>
+       </environments>
+   
+   
+       <mappers>
+            <mapper class="com.kuang.pojo.User"/>
+       </mappers>
+   
+   
+   </configuration>
+   
+   
+   
+   
+   
+   driver=com.mysql.jdbc.Driver
+   url=jdbc:mysql://127.0.0.1:3306/mybatis
+   username=root
+   password=wzf!@#000
+   
+   
+   
+   ```
+
+   
+
+3. 编写接口
+
+   ```java
+   package com.kuang.dao;
+   
+   import com.kuang.pojo.User;
+   
+   import java.util.List;
+   
+   public interface UserMapper {
+   
+       List<User> getUserList();
+   
+   
+   }
+   ```
+
+   
+
+4. 标写Mapper.xml
+
+   ```xml
+   <?xml version="1.0" encoding="UTF-8" ?>
+   <!DOCTYPE mapper
+           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+           "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="com.kuang.dao.UserMapper">
+   
+       <select id="getUserList" resultType="user">
+           select * from mybatis.user;
+       </select>
+   
+       
+   </mapper>
+   ```
+
+   
+
+5. 测试
+
+   ```java
+   public class MyTest {
+   
+        @Test
+       public void test1() throws IOException {
+   
+             String resource = "mybatis-config.xml";
+            InputStream resourceAsReader = Resources.getResourceAsStream(resource);
+   
+            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsReader);
+   
+            SqlSession sqlSession = sqlSessionFactory.openSession(true);
+   
+            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+   
+            List<User> userList = mapper.getUserList();
+            for (User user : userList) {
+                System.out.println(user);
+            }
+            
+            sqlSession.close();
+   
+        }
+   
+   
+   }
+   ```
+
+   
+
+### 整合
+
+spring 配置文件
+
+```XML
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--  Datasource  使用spring数据源替换Mybatis的配置
+    我们这里使用spring 提供的jdbc org.springframework.jdbc.datasource.DriverManagerDataSource
+-->
+
+     <bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+       <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+         <property name="username" value="root"/>
+         <property name="password" value="wzf!@#000"/>
+         <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
+     </bean>
+<!--    sqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="datasource" />
+<!--        绑定mybatis-->
+         <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:com/kuang/dao/UserMapper.xml"/>
+    </bean>
+
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+<!--        只能通过构造起注入
+因为SqlSessionTemplate没有set方法
+-->
+       <constructor-arg index="0" ref="sqlSessionFactory"/>
+  </bean>
+
+
+    
+
+</beans>
+```
+
+1. 编写数据源配置
+
+2. sqlSessionFactory
+
+3. sqlSessionTemplate(或者继承SqlSessionDaoSupport)
+
+   ![image-20210811010142984](/Users/chris/Library/Application Support/typora-user-images/image-20210811010142984.png)
+
+4. 需要给接口加实现类
+
+5. 将自己的实现类，注入到Spring中
+
+![image-20210811005937746](/Users/chris/Library/Application Support/typora-user-images/image-20210811005937746.png)
+
+-------
+
+## 声明式事务
+
+要么都成功，要么都失败
+
+事务涉及到数据完整性和一致性的问题
+
+### ACID
+
+- 原子性
+- 一致性
+- 隔离性
+  - 多个业务操作同一个资源，防止数据损坏
+- 持久性
+  - 事务一旦提交，结果都不会被影响，被持久化的存储到存储器中
+
+
+
+
+
