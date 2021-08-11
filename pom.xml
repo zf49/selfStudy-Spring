@@ -15,7 +15,6 @@
         <module>spring04-di</module>
         <module>spring05-Autowired</module>
         <module>spring06-annotation</module>
-        <module>spring07appconfig1</module>
         <module>spring07-appconfig</module>
         <module>spring08-proxy</module>
         <module>spring09-AOP</module>

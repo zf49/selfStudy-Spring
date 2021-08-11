@@ -653,13 +653,46 @@ spring 配置文件
 ### ACID
 
 - 原子性
+
 - 一致性
+
 - 隔离性
+
   - 多个业务操作同一个资源，防止数据损坏
+
 - 持久性
+
   - 事务一旦提交，结果都不会被影响，被持久化的存储到存储器中
 
+  Spring 容器中配置
+
+```xml
+<!--    结合aop实现事务-->
+<!--配置事务类      p-->
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+<!--        给那些方法配置事务-->
+<!--        配置事务的传播特性: new propagation = required-->
+        <tx:attributes>
+
+            <tx:method name="add" propagation="REQUIRED"/>
+            <tx:method name="delete" propagation="REQUIRED"/>
+            <tx:method name="query" read-only="true"/>
+            <tx:method name="update" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="REQUIRED"/>
+
+        </tx:attributes>
+    </tx:advice>
+
+<!--   配置事务切入-->
+    <aop:config>
+         <aop:pointcut id="txPointCut" expression="execution(* com.kuang.mapper.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>
+    </aop:config>
+```
 
 
 
+## 自动装配
 
+![image-20210811181406164](/Users/chris/Library/Application Support/typora-user-images/image-20210811181406164.png)

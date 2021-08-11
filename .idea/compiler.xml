@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="spring01-ioc" />
         <module name="spring04-di" />
+        <module name="spring11-transaction" />
         <module name="spring06-annotation" />
         <module name="spring10-mybatis" />
         <module name="spring09-AOP" />
